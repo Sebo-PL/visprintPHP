@@ -17,7 +17,7 @@
 // Soren Andersen:  http://intrepid.perlmonk.org/
 // Goizeder Ruiz de Gopegui: http://www.tastyrabbit.net
 //
-// Last modified 1 Nov 2006
+// Last modified 28 Nov 2006
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -37,8 +37,8 @@
 
 #define MAX_RES            1000
 #define DEFAULT_RES        300
-#define MAX_NEQNS          4     // number of equations
-#define DEFAULT_NEQNS      4
+#define MAX_CHECKSUM       128    
+#define DEFAULT_CHECKSUM   32
 #define DEFAULT_INTENSITY  30
 #define DEFAULT_BACKGROUND 0  
 #define DEFAULT_COLOUR     1  
@@ -48,31 +48,35 @@ typedef unsigned char byte;
 byte pic[MAX_RES][MAX_RES][3];
 png_bytep row_pointers[MAX_RES];
 
-double eqns[MAX_NEQNS][6];
-byte hashd[MAX_NEQNS][6];
+double eqns[MAX_CHECKSUM/8][6];
+byte hashd[MAX_CHECKSUM/8][6];
 
-int res, neqns, intensity, background;
+int res, neqns, intensity, background, checksum;
 int transparency = 0;
-char *str_version = "Visprint 2.0 by Goizeder Ruiz de Gopegui (http://www.tastyrabbit.net/visprint)\n";
+int alternatergb = 0;
+char *str_version = "Visprint 2.1 by Goizeder Ruiz de Gopegui (http://www.tastyrabbit.net/visprint)\n";
 char *str_usage =
-	"Visprint 2.0 (http://www.tastyrabbit.net/visprint)\n"
-	"Usage: md5sum foo.bar | visprint [Options] > foo.png\n"
+	"Visprint 2.1 (http://www.tastyrabbit.net/visprint)\n"
+	"Usage: md5sum(sha1sum) foo.bar | visprint [Options] > foo.png\n"
 	"Options:\n\n"
 	"-b(0-255)  Use the given background brightness. 0 means black, 255 means white. You can try other values,\n" 
 	"           but the resultant image will be quite ugly.The default is 0 (black).\n"
 	"\n"
-	"-c         Use the alternate coloring method\n"
+	"-c         Use the alternate coloring method. Flips RGB to BGR.\n"
 	"\n"
-	"-g         Create a black-and-white image. No greys or colors will be used if you use this option.\n"
+	"-a         Create the fractal with 4 different color areas.\n"
+	"\n"
+	"-g         Create a semi-grayscale image. The output varies heavily depending on the -b switch.\n"
 	"\n"
 	"-i(1-lots) Use the given intensity of color. With a black background, a higher intensity produces a \n"
         "           brighter image. With a white background, higher intensity produces a darker image.\n"
 	"           In all cases, calculation time doubles every time you double the intensity. The default is 30.\n"
 	"\n"
-	//"-n(2-4)    Use the given number of equations in calculating the fractal. This switch is untested! \n"
-	//"           I really don't know what'll happen if you specify more than 4. 1 will produce a blank image.\n" 
-	//"           0 probably will break the program.\n"
-	//"\n"
+	"-l(32-128) Use the given checksum length. Modify this number to match the hash function you are using. \n"
+	"           Examples: 32 for md5, 40 for sha1, 64 for sha256, 128 for sha512...\n" 
+	"           The output of 128 is foggy (but still useful). Higher values will result in crappy images,\n"
+	"           therefore 128 is the maximum accepted. The default value is 32.\n"
+	"\n"
 	"-r(1-1000) Use the given value for both the x and y resolutions. The calculation time will quadruple \n"
         "           every time you double this value. The default is 300.\n"
 	"\n"	
@@ -277,9 +281,11 @@ void ifs(void)
               pic[nxres2][nyres2][2]++;
           }
         }
+	//2 more lines added to fix the grayscale png creation
         else
-        {
-          pic[nxres2][nyres2][0] = max_intensity;
+        { pic[nxres2][nyres2][0] = max_intensity;
+	  pic[nxres2][nyres2][1] = max_intensity;
+          pic[nxres2][nyres2][2] = max_intensity;
         }
       }
 	    x=nx;
@@ -317,7 +323,7 @@ void writepnm(void)
 // void parse_cmdline(int argc,char *argv[])
 //
 // Added by David Johnston on Aug 12th 1998
-//
+// Fixed and modified by Goiz Ruiz 2006
 // Parses the command line for switches and other arguments
 //////////////////////////////////////////////////////////////
 
@@ -326,7 +332,7 @@ void parse_cmdline(int argc,char *argv[])
   int x;
 
   colour     = DEFAULT_COLOUR;
-  neqns      = DEFAULT_NEQNS;
+  checksum   = DEFAULT_CHECKSUM;
   res        = DEFAULT_RES;
   intensity  = DEFAULT_INTENSITY;
   background = DEFAULT_BACKGROUND;
@@ -335,8 +341,10 @@ void parse_cmdline(int argc,char *argv[])
     {
 //      fprintf(stderr,"looking at %s\n",argv[x]);
       
-      if(!strcmp("-c",argv[x]))
+      if(!strcmp("-a",argv[x]))
         colour = 2;
+      else if(!strcmp("-c",argv[x]))
+        alternatergb = 1;
       else if(!strcmp("-g",argv[x]))
         colour = 0;
       else if(!strcmp("-t",argv[x]))
@@ -358,24 +366,24 @@ void parse_cmdline(int argc,char *argv[])
 	        exit(1);
         }
       }
-      else if(!strcmp("-n",argv[x]))
+      else if(!strcmp("-l",argv[x]))
       {
 	      x++;
-        if(sscanf(argv[x],"%d",&neqns)==0)
+        if(sscanf(argv[x],"%d",&checksum)==0)
         {
-          fprintf(stderr, "invalid number of equations on command line \n");
+          fprintf(stderr, "invalid checksum length on command line \n");
 	        exit(1);
         }
       }
-	//There was no point in keeping the -n switch. We will always use -n4 to have a decent image anyways
-      /*else if(argv[x][0]=='-' && argv[x][1]=='n')
+	
+      else if(argv[x][0]=='-' && argv[x][1]=='l')
       {
-        if (sscanf(argv[x]+2,"%d",&neqns)==0)
+        if (sscanf(argv[x]+2,"%d",&checksum)==0)
         {
-          fprintf(stderr, "invalid number of equations on command line");
+          fprintf(stderr, "invalid checksum length on command line");
 	        exit(1);
         }
-      }*/
+      }
       else if(!strcmp("-i",argv[x]))
       {
 	      x++;
@@ -433,11 +441,12 @@ void parse_cmdline(int argc,char *argv[])
     res = MAX_RES;
   }
 
-  if(neqns > MAX_NEQNS)
+  if(checksum > MAX_CHECKSUM)
   {
-    fprintf(stderr, "% is too many equations.  Assuming %d.\n", neqns, DEFAULT_NEQNS);
-    neqns = DEFAULT_NEQNS;
+    fprintf(stderr, "%d checksumlength is too big.  Assuming %d.\n", checksum, DEFAULT_CHECKSUM);
+    checksum = DEFAULT_CHECKSUM;
   }
+ neqns= checksum/8;
 }
 
 
@@ -460,8 +469,8 @@ void write_row_callback(png_structp png_ptr, png_uint_32 row, int pass) {
 int writepng (void) {
    png_structp png_ptr;
    png_infop info_ptr;
-   png_color_16 background;
-   unsigned i;
+   png_color_16 transvalue;
+   unsigned i, j;
 
    /* Initialisation of PNG structures */
    png_ptr = png_create_write_struct(
@@ -484,21 +493,33 @@ int writepng (void) {
    /* png_set_write_status_fn(png_ptr, &write_row_callback); */
 
    /* Set header and write it */
-   png_set_IHDR(png_ptr, info_ptr, res, res, 8, PNG_COLOR_TYPE_RGB,
+   
+  png_set_IHDR(png_ptr, info_ptr, res, res, 8, PNG_COLOR_TYPE_RGB,
                 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
                 PNG_FILTER_TYPE_DEFAULT);
+   
 
    /* Set #000000 to transparent */
    if (transparency==1){
-	bzero(&background, sizeof(background));
-   	png_set_tRNS(png_ptr, info_ptr, 0, 0, &background);
+	//bzero(&background, sizeof(background));
+	transvalue.red = background;
+        transvalue.green = background;
+        transvalue.blue = background;
+   	png_set_tRNS(png_ptr, info_ptr, 0, 0, &transvalue);
    }
+   
    for (i = 0; i < res; ++i)
       row_pointers[i] = (png_bytep) pic[i];
    png_set_rows(png_ptr, info_ptr, row_pointers);
-   png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+   
+   if (alternatergb==1){
+	png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_BGR, NULL);
+   }
+   else	{	
+   	png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+   }
 
-   /* Uncomment if you enabled feedback during write above */
+/* Uncomment if you enabled feedback during write above */
    /* fprintf(stderr, "\n"); */
    
    fclose(stdout);
@@ -516,7 +537,7 @@ int main(int argc, char *argv[])
     inithashd();
     initeqns();
     ifs();
-//    writepnm();
+   // writepnm();
     writepng();
     return 0;
 }

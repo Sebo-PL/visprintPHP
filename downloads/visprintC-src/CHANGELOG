@@ -1,3 +1,13 @@
+2.1
+	28 Nov 2006 (Thanks to Jan Merka for the feedback on this version.)
+	- Added the option of using different hash functions as input (-l switch)
+	- Added the option of using an alternate color scheme by flipping RGB to BGR (-c switch)
+	- Polished and fixed the grayscale color scheme.
+	- Renamed the previous -c switch to -a (Area coloring scheme).
+	- Fixed a bug in the transparency code.
+	- Updated the man page and the help screen.
+	- Some minor bugfixes and code cleanups.
+
 2.0:
 	1 Nov 2006
 	- Created the homepage of the project: http://www.tastyrabbit.net/visprint
