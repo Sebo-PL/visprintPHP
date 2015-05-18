@@ -1,0 +1,30 @@
+2.0:
+	1 Nov 2006
+	- Created the homepage of the project: http://www.tastyrabbit.net/visprint
+	- Created the slackware package.
+	- Created the man page (using manedit), And every other documentation.
+	- Created the makefile.
+	- Fixed a couple of bugs in the command line parser function.
+	- Removed the -n switch. (The value 4 is always used anyways.)
+	- Added the help switch and function. 
+	- Added the -t switch to turn transparency on or off.
+	- Cleaned up the code.
+	 
+Previous versions: 
+	(this is the information about the visprint code version history
+	 that I have been able to gather so far)
+	
+	27 Aug 2004 Soren Andersen's version
+	- He added the png and transparency code. 
+	  His version is still available at:
+	  http://www.polettix.it/cgi-bin/wiki.pl/Programming/visprint_with_transparency
+
+	August 1998 David Johnston's version (win95 console port)
+	- He added the ability to specify background color, image resolution,
+	  and color intensity on the command line. He also optimized the 
+	  positioning and magnification of the fractal so that there isn't
+	  any wasted space in the image.
+
+	?? Ian Goldberg's original version
+	- No info available on the net. (Or at least I was unable to find any).
+	  Any help on this will be highly appreciated. 

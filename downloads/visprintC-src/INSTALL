@@ -1,0 +1,13 @@
+To compile visprint just do:
+
+make 
+
+If you want to install it system-wide:
+
+su
+make install
+
+The makefile is extremely simple, feel free to suit it to your needs.
+-- 
+  Goiz
+

@@ -1,0 +1,20 @@
+visprint (http://www.tastyrabbit.net/visprint/)
+By Goizeder Ruiz de Gopegui
+Copyright: Goizeder Ruiz de Gopegui
+License: GPL
+
+visprint is a program to produce visual fingerprints. This code was
+written by Ian Goldberg, based on an idea by Hal Finney, in a post to
+the coderpunks mailing list. The most excellent color enhancements
+were added by Raph Levien.  David Johnston Ported the program to 
+Windows 95 console mode and added a bunch of nice features.
+Soren Andersen developed the png and transparency code.
+
+I decided to rescue the code from the oblivion of the
+internet, clean it up and maintain it. As far as I know, there is no
+copyright infrigement, since the code has always been free and available
+in the net and the previous authors are properly acknowledged. (Please, don't sue me ;)
+
+Take a look at the man page for more information about visprint.
+
+ 
