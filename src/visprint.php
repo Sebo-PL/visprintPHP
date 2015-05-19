@@ -13,7 +13,8 @@ class VisColorModes extends SplEnum{
 }
 
 class VisPrint{
- const MAX_RES            = 1000;
+ const MAX_RES            = 512; //1000;
+ const MIN_RES            = 64;
  const DEFAULT_RES        = 256; //300;
  const DEFAULT_INTENSITY  = 30;
  const DEFAULT_BACKGROUND = 0;
@@ -40,6 +41,22 @@ class VisPrint{
  }
 
  public $isTransparent = true;
+
+ // the size of the image to be created
+ private $res = self::DEFAULT_RES;
+ public function getRes(){
+  return $this->res;
+ }
+ public function setRes(int $r){
+  if($r > self::MAX_RES){
+   $r = self::MAX_RES;
+  }
+  if($r < self::MIN_RES){
+   $r = self::MIN_RES;
+  }
+  $this->res = $r;
+  return $r;
+ }
 
  private $pic = array_fill(0, self::DEFAULT_RES, array_fill(0, self::DEFAULT_RES, array(0, 0, 0)));
 
