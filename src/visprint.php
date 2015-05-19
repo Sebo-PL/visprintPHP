@@ -24,10 +24,10 @@ class VisPrint{
 
  // the message digest based on which the fractal is going to be created
  private $checksum;
- public getChecksum(){
+ public function getChecksum(){
   return $this->checksum;
  }
- public setChecksum(string $c){
+ public function setChecksum(string $c){
   // The checksum needs to be a string of at least 32 and at most 128 hex digits.
   // The value longer then 128 would result in a foggy image.
   // The length of 32 match the size of MD5 and 128 - the size of SHA512.
