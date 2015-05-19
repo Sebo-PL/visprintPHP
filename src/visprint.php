@@ -1,13 +1,26 @@
 <?php
 /*
 */
+class VisColorModes extends SplEnum{
+ const __default = self::COLORFULL;
+
+ // semi greyscale:
+ const GREYSCALE = 0;
+ // default colorfull image:
+ const COLORFULL = 1;
+ // 4 different color areas:
+ const FOURCOLOR = 2;
+}
+
 class VisPrint{
  const MAX_RES            = 1000;
  const DEFAULT_RES        = 256; //300;
  const MAX_CHECKSUM       = 128;
  const DEFAULT_INTENSITY  = 30;
  const DEFAULT_BACKGROUND = 0;
- const DEFAULT_COLOUR     = 1;
+
+ // VisColorModes
+ public $colour = new VisColorModes();
 
  public $isTransparent = true;
 
