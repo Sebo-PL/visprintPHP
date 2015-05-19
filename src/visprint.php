@@ -35,7 +35,7 @@ class VisPrint{
    return $this->checksum;
   }else{
    // In case the provided string is not a valid message digest - the SHA256 is aplied.
-   return $this->setChecksum(hash('sha256', $c);
+   return $this->setChecksum(hash('sha256', "$c");
   }
  }
 
