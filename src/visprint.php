@@ -15,12 +15,29 @@ class VisColorModes extends SplEnum{
 class VisPrint{
  const MAX_RES            = 1000;
  const DEFAULT_RES        = 256; //300;
- const MAX_CHECKSUM       = 128;
  const DEFAULT_INTENSITY  = 30;
  const DEFAULT_BACKGROUND = 0;
 
  // VisColorModes
  public $colour = new VisColorModes();
+
+ // the message digest based on which the fractal is going to be created
+ private $checksum;
+ public getChecksum(){
+  return $this->checksum;
+ }
+ public setChecksum(string $c){
+  // The checksum needs to be a string of at least 32 and at most 128 hex digits.
+  // The value longer then 128 would result in a foggy image.
+  // The length of 32 match the size of MD5 and 128 - the size of SHA512.
+  if(preg_match('/^[0-9a-fA-F]{32,128}$/', $c)){
+   $this->checksum = strtolower($c);
+   return $this->checksum;
+  }else{
+   // In case the provided string is not a valid message digest - the SHA256 is aplied.
+   return $this->setChecksum(hash('sha256', $c);
+  }
+ }
 
  public $isTransparent = true;
 
