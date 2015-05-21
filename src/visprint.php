@@ -32,16 +32,44 @@ class VisPoint{
 class VisMatrix{
  private $m;
 
+ // $c ~ /^[0-9a-f]{0,128}$/
  public function __construct(string $c){
   $this->m = array_fill(0, 8, 0);
+  if((strlen($c)<64)&&((strlen($c)&3)!=0)){
+   $c .= str_repeat('0', 4-(strlen($c)&3));
+  }
+  for($y = 0; ($y<61)&&($y<strlen($c)); $y+=4){
+   $this->setRow($y>>2, (int) hexdec(substr($c, $y, 4)));
+  }
  }
 
- public function get($x, $y){
-  return ((1<<$x)&$this->getRow($y)) != 0;
+ // $x in 0..15
+ // $y in 0..15
+ public function getByte(int $x, int $y){
+  return ((1<<(((int)$x)&0xf))&$this->getRow($y)) != 0;
  }
 
- public function getRow($y){
-  return ($this->m[$y>>1]&(0xff<<((1&$y)<<3)))>>((1&$y)<<3);
+ // $y in 0..15
+ public function getRow(int $y){
+  $y = ((int)$y)&0xf;
+  return ($this->m[$y>>1]&(0xffff<<((1&$y)<<4)))>>((1&$y)<<4);
+ }
+
+ private function setRow(int $y, int $r){
+  //$y = ((int)$y)&0xf;
+  // TODO: implement setting up the values in $this->m
+  $r = ((int)$r)&0xffff;
+  //$this->m[$y>>1] = ($this->m[$y>>1]&(~(0xffff<<((1&$y)<<4))))|
+ }
+
+ // $r in 0..255
+ public function move(int $r){
+  $r = ((int)$r)&0xffff;
+  $res = 0;
+  for($y = 0; $y<16; $y++){
+   $res += ($this->getRow($y)*$r)&0xffff;
+  }
+  return $res;
  }
 }
 
