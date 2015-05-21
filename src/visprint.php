@@ -12,6 +12,39 @@ class VisColorModes extends SplEnum{
  const FOURCOLOR = 2;
 }
 
+class VisPoint{
+ // 0..255 ~ 8b
+ public $x;
+ // 0..255 - 8b
+ public $y;
+
+ // 0..255 - 8b
+ public $r;
+ // 0..255 - 8b
+ public $g;
+ // 0..255 - 8b
+ public $b;
+
+ // 0..255 - 8b
+ public $a;
+}
+
+class VisMatrix{
+ private $m;
+
+ public function __construct(string $c){
+  $this->m = array_fill(0, 8, 0);
+ }
+
+ public function get($x, $y){
+  return ((1<<$x)&$this->getRow($y)) != 0;
+ }
+
+ public function getRow($y){
+  return ($this->m[$y>>1]&(0xff<<((1&$y)<<3)))>>((1&$y)<<3);
+ }
+}
+
 class VisPrint{
  const MAX_RES            = 512; //1000;
  const MIN_RES            = 64;
