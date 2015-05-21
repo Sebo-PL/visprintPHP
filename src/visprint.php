@@ -34,7 +34,9 @@ class VisMatrix{
 
  // $c ~ /^[0-9a-f]{0,128}$/
  public function __construct(string $c){
-  $this->m = array_fill(0, 8, 0);
+  // the arry would be half-filled but
+  // the calculation at such is expected to be trivial
+  $this->m = array_fill(0, 16, 0);
   if((strlen($c)<64)&&((strlen($c)&3)!=0)){
    $c .= str_repeat('0', 4-(strlen($c)&3));
   }
@@ -51,25 +53,24 @@ class VisMatrix{
 
  // $y in 0..15
  public function getRow(int $y){
-  $y = ((int)$y)&0xf;
-  return ($this->m[$y>>1]&(0xffff<<((1&$y)<<4)))>>((1&$y)<<4);
+  return $this->m[((int)$y)&0xf]&0xffff;
  }
 
  private function setRow(int $y, int $r){
   //$y = ((int)$y)&0xf;
-  // TODO: implement setting up the values in $this->m
   $r = ((int)$r)&0xffff;
-  //$this->m[$y>>1] = ($this->m[$y>>1]&(~(0xffff<<((1&$y)<<4))))|
+  $this->m[$y] = $r;
+  return $r;
  }
 
  // $r in 0..255
  public function move(int $r){
   $r = ((int)$r)&0xffff;
   $res = 0;
-  for($y = 0; $y<16; $y++){
-   $res += ($this->getRow($y)*$r)&0xffff;
+  foreach($row in $this->m){
+   $res += ($row*$r)&0xffff;
   }
-  return $res;
+  return $res&0xffff;
  }
 }
 
