@@ -67,7 +67,7 @@ class VisMatrix{
  public function move(int $r){
   $r = ((int)$r)&0xffff;
   $res = 0;
-  foreach($row in $this->m){
+  foreach($this->m as $row){
    $res += ($row*$r)&0xffff;
   }
   return $res&0xffff;
