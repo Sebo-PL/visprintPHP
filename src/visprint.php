@@ -15,8 +15,31 @@ class VisColorModes extends SplEnum{
 class VisPoint{
  // 0..255 ~ 8b
  public $x;
+
+ public function getX(){
+  return $this->x&0xff;
+ }
+
  // 0..255 - 8b
  public $y;
+  
+ public function getY(){
+  return $this->y&0xff;
+ }
+
+ // This is intended to return both coordinates at one int value
+ // where the higher bits corresponds to the $x coordinate while
+ // the lower bits are storing the value of $y.
+ public function getCoordinates(){
+  return ($this->x<<8)|$this->y;
+ }
+
+ public function setCoordinates(int $c){
+  $c = ((int)$c)&0xffff;
+  $this->x = $c>>8;
+  $this->y = $c&0xff;
+  return $this;
+ }
 
  // 0..255 - 8b
  public $r;
