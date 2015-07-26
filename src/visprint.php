@@ -192,42 +192,42 @@ class VisPrint{
  private $hashd = array_fill(0, self::MAX_CHECKSUM/8, array_fill(0, 6, 0));
 
  public function __construct($h){
-   if(is_string($h)){
-    if(preg_match('/^[0-9a-fA-F]*$/', $h)){
-     $this->init($h);
-    }else{
-     $this->init(hash('sha256', $h));
-    }
+  if(is_string($h)){
+   if(preg_match('/^[0-9a-fA-F]*$/', $h)){
+    $this->init($h);
    }else{
-    $this->init(json_encode($h));
+    $this->init(hash('sha256', $h));
    }
+  }else{
+   $this->init(json_encode($h));
   }
+ }
 
  private function init($s){
-  }
+ }
 
  public function getPNG(){
-   $im = imagecreatetruecolor(256, 256);
-   imagealphablending($im, !$this->isTransparent);
-   imagesavealpha($im, $this->isTransparent);
-   ob_start();
-   imagepng($im);
-   $im_data = ob_get_contents();
-   ob_end_clean();
-   imagedestroy($im);
-   return $im_data;
-  }
+  $im = imagecreatetruecolor(256, 256);
+  imagealphablending($im, !$this->isTransparent);
+  imagesavealpha($im, $this->isTransparent);
+  ob_start();
+  imagepng($im);
+  $im_data = ob_get_contents();
+  ob_end_clean();
+  imagedestroy($im);
+  return $im_data;
+ }
 
  public function draw(){
-   $im_data = $this->getPNG();
-   if(headers_sent()){
-    //TODO: raise exception
-   }else{
-    header('Content-type: image/png');
-    header('Content-Length: '.strlen($im_data));
-    die($im_data);
-    //ob_end_flush();
-   }
+  $im_data = $this->getPNG();
+  if(headers_sent()){
+   //TODO: raise exception
+  }else{
+   header('Content-type: image/png');
+   header('Content-Length: '.strlen($im_data));
+   die($im_data);
+   //ob_end_flush();
   }
+ }
 }
 ?>
