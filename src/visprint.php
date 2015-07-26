@@ -41,6 +41,44 @@ class VisPoint{
   return $this;
  }
 
+ // This is intended to set the color of the point based on the
+ // given color mode and its location.
+ public function setColor(VisColorModes $m){
+  $this->a = 128;
+  if($m == VisColorModes::GREYSCALE){
+   // Greyscale color mode: from blach to white horizontally
+   $this->r = $this->g = $this->b = $this->x;
+  }else if($m == VisColorModes::FOURCOLOR){
+   // Four color mode: red, green, blue and white
+   if($this->x < 128){
+    $this->r = 0;
+    if($this->y < 128){
+     $this->g = 0;
+     $this->b = 255;
+    }else{
+     $this->g = 255;
+     $this->b = 0;
+    }
+   }else{
+    $this->r = 255;
+    if($this->y < 128){
+     $this->g = $this->b = 0;
+    }else{
+     $this->g = $this->b = 255;
+    }
+   }
+  }else{
+   // default
+   $this->r = $this->x;
+   $this->g = $this->y;
+   if($this->x > $this->y){
+    $this->b = 255-$this->x+$this->y;
+   }else{
+    $this->b = 255+$this->x-$this->y;
+   }
+  }
+ }
+
  // 0..255 - 8b
  public $r;
  // 0..255 - 8b
