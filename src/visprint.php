@@ -46,7 +46,7 @@ class VisPoint{
  public function setColor(VisColorModes $m){
   $this->a = 128;
   if($m == VisColorModes::GREYSCALE){
-   // Greyscale color mode: from blach to white horizontally
+   // Greyscale color mode: from black to white horizontally
    $this->r = $this->g = $this->b = $this->x;
   }else if($m == VisColorModes::FOURCOLOR){
    // Four color mode: red, green, blue and white
@@ -68,7 +68,7 @@ class VisPoint{
     }
    }
   }else{
-   // default
+   // default: smooth transition with red, green, blue and white on the corners
    $this->r = $this->x;
    $this->g = $this->y;
    if($this->x > $this->y){
