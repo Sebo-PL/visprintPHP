@@ -134,9 +134,9 @@ class VisMatrix{
   return $res&0xffff;
  }
   
-  public function movePoint(VisPoint $p){
-    return $p->setCoordinates($this->move($p->getCoordinates()));
-  }
+ public function movePoint(VisPoint $p){
+  return $p->setCoordinates($this->move($p->getCoordinates()));
+ }
 }
 
 class VisPrint{
