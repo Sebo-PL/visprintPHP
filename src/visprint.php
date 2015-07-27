@@ -201,7 +201,7 @@ class VisPrint{
  }
 
  public function getPNG(){
-  $im = imagecreatetruecolor(256, 256);
+  $im = imagecreatetruecolor($this->getRes(), $this->getRes());
   imagealphablending($im, !$this->isTransparent);
   imagesavealpha($im, $this->isTransparent);
   ob_start();
