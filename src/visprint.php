@@ -185,12 +185,6 @@ class VisPrint{
   return $r;
  }
 
- private $pic = array_fill(0, self::DEFAULT_RES, array_fill(0, self::DEFAULT_RES, array(0, 0, 0)));
-
- private $eqns = array_fill(0, self::MAX_CHECKSUM/8, array_fill(0, 6, 0.0));
-
- private $hashd = array_fill(0, self::MAX_CHECKSUM/8, array_fill(0, 6, 0));
-
  public function __construct($h){
   if(is_string($h)){
    if(preg_match('/^[0-9a-fA-F]*$/', $h)){
