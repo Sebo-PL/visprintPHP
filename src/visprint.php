@@ -140,9 +140,9 @@ class VisMatrix{
 }
 
 class VisPrint{
- const MAX_RES            = 512; //1000;
- const MIN_RES            = 64;
- const DEFAULT_RES        = 256; //300;
+ const MAX_RES            = 256;
+ const MIN_RES            = 256;
+ const DEFAULT_RES        = 256;
  const DEFAULT_INTENSITY  = 30;
  const DEFAULT_BACKGROUND = 0;
 
