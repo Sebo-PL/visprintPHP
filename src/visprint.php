@@ -144,7 +144,6 @@ class VisPrint{
  const MIN_RES            = 256;
  const DEFAULT_RES        = 256;
  const DEFAULT_INTENSITY  = 30;
- const DEFAULT_BACKGROUND = 0;
 
  // VisColorModes
  public $colour = new VisColorModes();
@@ -168,6 +167,9 @@ class VisPrint{
  }
 
  public $isTransparent = true;
+
+ //Background can be black or white. 
+ public $isBackgroundBlack = true;
 
  // the size of the image to be created
  private $res = self::DEFAULT_RES;
